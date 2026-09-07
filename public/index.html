@@ -44,27 +44,6 @@
       gap: 12px;
     }
 
-    .history-button {
-      width: 46px;
-      height: 46px;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      background: #fff;
-      color: #344054;
-      font-size: 22px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: .2s;
-    }
-
-    .history-button:hover {
-      border-color: #635bff;
-      color: #635bff;
-      background: #fafaff;
-    }
-
     .logo-icon {
       width: 48px;
       height: 48px;
@@ -87,6 +66,27 @@
       color: #6b7280;
       font-size: 13px;
       margin-top: 2px;
+    }
+
+    .history-button {
+      width: 46px;
+      height: 46px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #fff;
+      color: #344054;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: .2s;
+    }
+
+    .history-button:hover {
+      border-color: #635bff;
+      color: #635bff;
+      background: #fafaff;
     }
 
     main {
@@ -161,14 +161,17 @@
       display: none;
     }
 
+    /* PREVIEW DA IMAGEM */
     #preview {
       display: none;
       width: 100%;
-      max-height: 500px;
+      max-width: 100%;
+      max-height: 700px;
       object-fit: contain;
       border-radius: 15px;
       margin-top: 18px;
       background: #f3f4f6;
+      border: 1px solid #e5e7eb;
     }
 
     .button {
@@ -196,6 +199,16 @@
       margin-top: 18px;
       color: #635bff;
       font-weight: 600;
+    }
+
+    .error {
+      display: none;
+      background: #fff1f2;
+      color: #b42318;
+      border: 1px solid #fecdd3;
+      padding: 14px;
+      border-radius: 12px;
+      margin-top: 15px;
     }
 
     #resultado {
@@ -284,16 +297,6 @@
       line-height: 1.55;
     }
 
-    .error {
-      display: none;
-      background: #fff1f2;
-      color: #b42318;
-      border: 1px solid #fecdd3;
-      padding: 14px;
-      border-radius: 12px;
-      margin-top: 15px;
-    }
-
     footer {
       text-align: center;
       color: #98a2b3;
@@ -301,13 +304,15 @@
       padding: 25px;
     }
 
-    /* HISTÓRICO */
+    /* =========================
+       HISTÓRICO
+       ========================= */
 
     .history-overlay {
       position: fixed;
       inset: 0;
       background: rgba(16, 24, 40, .45);
-      z-index: 100;
+      z-index: 1000;
       display: none;
     }
 
@@ -433,894 +438,1215 @@
       .card {
         padding: 15px;
       }
+
+      #preview {
+        max-height: 650px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <div class="header-inner">
+  <header>
+    <div class="header-inner">
 
-    <div class="logo">
-      <div class="logo-icon">✦</div>
-      <div>
-        <h1>IA NAI</h1>
-        <p>Corretor inteligente de redações</p>
+      <div class="logo">
+        <div class="logo-icon">✦</div>
+
+        <div>
+          <h1>IA NAI</h1>
+          <p>Corretor inteligente de redações</p>
+        </div>
       </div>
+
+      <button
+        id="abrirHistorico"
+        class="history-button"
+        aria-label="Abrir histórico"
+        title="Histórico"
+        type="button"
+      >
+        ☷
+      </button>
+
     </div>
+  </header>
 
-    <button
-      id="abrirHistorico"
-      class="history-button"
-      aria-label="Abrir histórico"
-      title="Histórico"
-    >
-      ☷
-    </button>
 
-  </div>
-</header>
+  <!-- PAINEL DO HISTÓRICO -->
 
-<!-- PAINEL DO HISTÓRICO -->
-
-<div
-  id="historyOverlay"
-  class="history-overlay"
-  aria-hidden="true"
->
-  <aside
-    class="history-panel"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="historyTitle"
+  <div
+    id="historyOverlay"
+    class="history-overlay"
+    aria-hidden="true"
   >
 
-    <div class="history-header">
-      <h2 id="historyTitle">📋 Histórico</h2>
-
-      <button
-        id="fecharHistorico"
-        class="close-history"
-        aria-label="Fechar histórico"
-      >
-        ×
-      </button>
-    </div>
-
-    <div id="listaHistorico"></div>
-
-    <div class="history-actions">
-      <button
-        id="limparHistorico"
-        class="clear-history"
-      >
-        Apagar todo o histórico
-      </button>
-    </div>
-
-  </aside>
-</div>
-
-<main>
-
-  <section class="hero">
-
-    <h2>
-      Corrija sua redação com <span>IA</span>
-    </h2>
-
-    <p>
-      Envie uma foto da sua redação e receba uma análise completa
-      no estilo ENEM.
-    </p>
-
-  </section>
-
-  <section class="card">
-
-    <label
-      class="upload-area"
-      for="imagem"
+    <aside
+      class="history-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="historyTitle"
     >
 
-      <div>
+      <div class="history-header">
 
-        <div class="upload-icon">
-          📷
+        <h2 id="historyTitle">
+          📋 Histórico
+        </h2>
+
+        <button
+          id="fecharHistorico"
+          class="close-history"
+          aria-label="Fechar histórico"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div id="listaHistorico"></div>
+
+      <div class="history-actions">
+
+        <button
+          id="limparHistorico"
+          class="clear-history"
+          type="button"
+        >
+          Apagar todo o histórico
+        </button>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+
+  <main>
+
+    <section class="hero">
+
+      <h2>
+        Corrija sua redação com <span>IA</span>
+      </h2>
+
+      <p>
+        Envie uma foto da sua redação e receba uma análise completa
+        no estilo ENEM.
+      </p>
+
+    </section>
+
+
+    <section class="card">
+
+      <!-- ÁREA PARA SELECIONAR A IMAGEM -->
+
+      <label
+        class="upload-area"
+        for="imagem"
+        id="uploadArea"
+      >
+
+        <div>
+
+          <div class="upload-icon">
+            📷
+          </div>
+
+          <h3>
+            Envie a foto da sua redação
+          </h3>
+
+          <p>
+            Toque aqui para escolher uma imagem<br>
+            JPG, JPEG ou PNG
+          </p>
+
         </div>
 
-        <h3>
-          Envie a foto da sua redação
-        </h3>
+      </label>
 
-        <p>
-          Toque aqui para escolher uma imagem<br>
-          JPG, JPEG ou PNG
-        </p>
 
-      </div>
+      <!-- INPUT -->
 
-    </label>
+      <input
+        id="imagem"
+        type="file"
+        accept="image/png,image/jpeg,image/jpg"
+      >
 
-    <input
-      id="imagem"
-      type="file"
-      accept="image/png,image/jpeg,image/jpg"
-    >
 
-    <img
-      id="preview"
-      alt="Prévia da redação"
-    >
+      <!--
+        A IMAGEM SELECIONADA APARECE AQUI
+      -->
 
-    <button
-      id="corrigir"
-      class="button"
-      disabled
-    >
-      ✨ Corrigir redação
-    </button>
+      <img
+        id="preview"
+        alt="Prévia da redação selecionada"
+      >
 
-    <div
-      id="status"
-      class="status"
-    >
-      🔎 A IA NAI está analisando sua redação...
-    </div>
 
-    <div
-      id="erro"
-      class="error"
-    ></div>
+      <!-- BOTÃO DE CORRIGIR -->
 
-  </section>
+      <button
+        id="corrigir"
+        class="button"
+        type="button"
+        disabled
+      >
+        ✨ Corrigir redação
+      </button>
 
-  <!-- RESULTADO -->
-
-  <section id="resultado">
-
-    <div class="card">
-
-      <div class="nota">
-
-        <small>
-          NOTA FINAL
-        </small>
-
-        <strong id="notaFinal">
-          0
-        </strong>
-
-        <small>
-          de 1000 pontos
-        </small>
-
-      </div>
 
       <div
-        id="competencias"
-        class="competencias"
+        id="status"
+        class="status"
+      >
+        🔎 A IA NAI está analisando sua redação...
+      </div>
+
+
+      <div
+        id="erro"
+        class="error"
       ></div>
 
-      <div class="section">
+    </section>
 
-        <h3>
-          📝 Transcrição
-        </h3>
+
+    <!-- RESULTADO -->
+
+    <section id="resultado">
+
+      <div class="card">
+
+        <div class="nota">
+
+          <small>
+            NOTA FINAL
+          </small>
+
+          <strong id="notaFinal">
+            0
+          </strong>
+
+          <small>
+            de 1000 pontos
+          </small>
+
+        </div>
+
 
         <div
-          id="transcricao"
-          class="transcricao"
+          id="competencias"
+          class="competencias"
         ></div>
 
+
+        <div class="section">
+
+          <h3>
+            📝 Transcrição
+          </h3>
+
+          <div
+            id="transcricao"
+            class="transcricao"
+          ></div>
+
+        </div>
+
+
+        <div class="section">
+
+          <h3>
+            ✍️ Melhorias encontradas
+          </h3>
+
+          <div id="melhorias"></div>
+
+        </div>
+
+
+        <div class="section">
+
+          <h3>
+            💪 Pontos fortes
+          </h3>
+
+          <div id="pontosFortes"></div>
+
+        </div>
+
+
+        <div class="section">
+
+          <h3>
+            🎯 Próximos passos
+          </h3>
+
+          <div id="proximosPassos"></div>
+
+        </div>
+
       </div>
 
-      <div class="section">
+    </section>
 
-        <h3>
-          ✍️ Melhorias encontradas
-        </h3>
-
-        <div id="melhorias"></div>
-
-      </div>
-
-      <div class="section">
-
-        <h3>
-          💪 Pontos fortes
-        </h3>
-
-        <div id="pontosFortes"></div>
-
-      </div>
-
-      <div class="section">
-
-        <h3>
-          🎯 Próximos passos
-        </h3>
-
-        <div id="proximosPassos"></div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-</main>
-
-<footer>
-  IA NAI — Correção inteligente de redações
-</footer>
-
-<script>
-
-  const input =
-    document.getElementById("imagem");
-
-  const preview =
-    document.getElementById("preview");
-
-  const button =
-    document.getElementById("corrigir");
-
-  const status =
-    document.getElementById("status");
-
-  const erro =
-    document.getElementById("erro");
-
-  const resultado =
-    document.getElementById("resultado");
-
-  const abrirHistorico =
-    document.getElementById("abrirHistorico");
-
-  const fecharHistorico =
-    document.getElementById("fecharHistorico");
-
-  const historyOverlay =
-    document.getElementById("historyOverlay");
-
-  const listaHistorico =
-    document.getElementById("listaHistorico");
-
-  const limparHistorico =
-    document.getElementById("limparHistorico");
+  </main>
 
 
-  let arquivoSelecionado = null;
-
-  let historico =
-    carregarHistorico();
-
-
-  /*
-   * SELEÇÃO DA IMAGEM
-   */
-
-  input.addEventListener("change", () => {
-
-    const arquivo = input.files[0];
-
-    if (!arquivo) return;
-
-    arquivoSelecionado = arquivo;
-
-    preview.src =
-      URL.createObjectURL(arquivo);
-
-    preview.style.display = "block";
-
-    button.disabled = false;
-
-    erro.style.display = "none";
-
-    resultado.style.display = "none";
-
-  });
+  <footer>
+    IA NAI — Correção inteligente de redações
+  </footer>
 
 
-  /*
-   * CORRIGIR REDAÇÃO
-   */
+  <script>
 
-  button.addEventListener("click", async () => {
+    /* =========================
+       ELEMENTOS
+       ========================= */
 
-    if (!arquivoSelecionado) return;
+    const input =
+      document.getElementById("imagem");
 
-    button.disabled = true;
+    const preview =
+      document.getElementById("preview");
 
-    status.style.display = "block";
+    const button =
+      document.getElementById("corrigir");
 
-    erro.style.display = "none";
+    const status =
+      document.getElementById("status");
 
-    resultado.style.display = "none";
+    const erro =
+      document.getElementById("erro");
+
+    const resultado =
+      document.getElementById("resultado");
+
+    const uploadArea =
+      document.getElementById("uploadArea");
+
+    const abrirHistorico =
+      document.getElementById("abrirHistorico");
+
+    const fecharHistorico =
+      document.getElementById("fecharHistorico");
+
+    const historyOverlay =
+      document.getElementById("historyOverlay");
+
+    const listaHistorico =
+      document.getElementById("listaHistorico");
+
+    const limparHistorico =
+      document.getElementById("limparHistorico");
 
 
-    const formData =
-      new FormData();
+    /* =========================
+       VARIÁVEIS
+       ========================= */
 
-    formData.append(
-      "image",
-      arquivoSelecionado
-    );
+    let arquivoSelecionado = null;
+
+    let historico = carregarHistorico();
 
 
-    try {
+    /* =========================
+       ESCAPAR HTML
+       ========================= */
 
-      const response =
-        await fetch(
-          "/api/corrigir",
-          {
-            method: "POST",
-            body: formData
-          }
+    function escapar(valor) {
+
+      return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =========================
+       SELEÇÃO DA IMAGEM
+       ========================= */
+
+    input.addEventListener("change", function(event) {
+
+      const arquivo =
+        event.target.files &&
+        event.target.files[0];
+
+      if (!arquivo) {
+        return;
+      }
+
+
+      /* Verifica o tipo */
+
+      if (!arquivo.type.startsWith("image/")) {
+
+        erro.textContent =
+          "Selecione uma imagem JPG, JPEG ou PNG.";
+
+        erro.style.display = "block";
+
+        input.value = "";
+
+        return;
+      }
+
+
+      /* Guarda o arquivo */
+
+      arquivoSelecionado = arquivo;
+
+
+      /*
+       * Usa FileReader em vez de depender
+       * somente do createObjectURL.
+       */
+
+      const leitor = new FileReader();
+
+
+      leitor.onload = function(e) {
+
+        /*
+         * Coloca a imagem diretamente
+         * no elemento de preview.
+         */
+
+        preview.src = e.target.result;
+
+
+        /*
+         * Mostra a imagem.
+         */
+
+        preview.style.display = "block";
+
+        preview.removeAttribute("hidden");
+
+
+        /*
+         * Libera o botão.
+         */
+
+        button.disabled = false;
+
+        button.style.pointerEvents = "auto";
+
+        button.style.opacity = "1";
+
+
+        /*
+         * Esconde erro.
+         */
+
+        erro.style.display = "none";
+
+
+        /*
+         * Esconde resultado anterior.
+         */
+
+        resultado.style.display = "none";
+
+
+        /*
+         * Muda o texto da área de upload.
+         */
+
+        uploadArea.innerHTML = `
+          <div>
+            <div class="upload-icon">✅</div>
+            <h3>Imagem selecionada</h3>
+            <p>
+              Toque aqui para escolher outra imagem
+            </p>
+          </div>
+        `;
+
+      };
+
+
+      leitor.onerror = function() {
+
+        arquivoSelecionado = null;
+
+        preview.removeAttribute("src");
+        preview.style.display = "none";
+
+        button.disabled = true;
+
+        erro.textContent =
+          "Não foi possível carregar a imagem.";
+
+        erro.style.display = "block";
+
+      };
+
+
+      /*
+       * Faz a leitura da imagem.
+       */
+
+      leitor.readAsDataURL(arquivo);
+
+    });
+
+
+    /* =========================
+       CORRIGIR REDAÇÃO
+       ========================= */
+
+    button.addEventListener("click", async function() {
+
+      if (!arquivoSelecionado) {
+
+        erro.textContent =
+          "Selecione uma imagem da redação primeiro.";
+
+        erro.style.display = "block";
+
+        return;
+      }
+
+
+      button.disabled = true;
+
+      status.style.display = "block";
+
+      erro.style.display = "none";
+
+      resultado.style.display = "none";
+
+
+      const formData =
+        new FormData();
+
+
+      formData.append(
+        "image",
+        arquivoSelecionado
+      );
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/corrigir",
+            {
+              method: "POST",
+              body: formData
+            }
+          );
+
+
+        let data;
+
+        try {
+
+          data =
+            await response.json();
+
+        } catch {
+
+          throw new Error(
+            "O servidor retornou uma resposta inválida."
+          );
+
+        }
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Erro ao corrigir a redação."
+          );
+
+        }
+
+
+        mostrarResultado(data);
+
+        salvarNoHistorico(data);
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        erro.textContent =
+          error.message ||
+          "Erro ao corrigir a redação.";
+
+        erro.style.display = "block";
+
+      } finally {
+
+        button.disabled = false;
+
+        status.style.display = "none";
+
+      }
+
+    });
+
+
+    /* =========================
+       MOSTRAR RESULTADO
+       ========================= */
+
+    function mostrarResultado(data) {
+
+      resultado.style.display = "block";
+
+
+      document.getElementById(
+        "notaFinal"
+      ).textContent =
+        data.nota_final ?? 0;
+
+
+      document.getElementById(
+        "transcricao"
+      ).textContent =
+        data.transcricao ||
+        "Não foi possível transcrever.";
+
+
+      /* COMPETÊNCIAS */
+
+      const competencias =
+        document.getElementById(
+          "competencias"
+        );
+
+      competencias.innerHTML = "";
+
+
+      (data.competencias || [])
+        .forEach(c => {
+
+          const div =
+            document.createElement("div");
+
+          div.className =
+            "competencia";
+
+
+          div.innerHTML = `
+            <b>${escapar(c.codigo)}</b>
+            <span>${escapar(c.nota)}/200</span>
+          `;
+
+
+          competencias.appendChild(div);
+
+        });
+
+
+      /* MELHORIAS */
+
+      const melhorias =
+        document.getElementById(
+          "melhorias"
+        );
+
+      melhorias.innerHTML = "";
+
+
+      (data.melhorias || [])
+        .forEach(m => {
+
+          const div =
+            document.createElement("div");
+
+          div.className = "item";
+
+
+          div.innerHTML = `
+            <b>
+              ${escapar(
+                m.categoria || "Melhoria"
+              )}
+            </b>
+
+            <p>
+              <strong>Original:</strong>
+              ${escapar(
+                m.trecho_original || ""
+              )}
+            </p>
+
+            <p>
+              <strong>Recomendação:</strong>
+              ${escapar(
+                m.recomendacao || ""
+              )}
+            </p>
+
+            <p>
+              <strong>Explicação:</strong>
+              ${escapar(
+                m.explicacao || ""
+              )}
+            </p>
+
+            ${
+              m.alternativas?.length
+                ? `
+                  <p>
+                    <strong>Alternativas:</strong>
+                    ${m.alternativas
+                      .map(escapar)
+                      .join(" • ")}
+                  </p>
+                `
+                : ""
+            }
+          `;
+
+
+          melhorias.appendChild(div);
+
+        });
+
+
+      /* PONTOS FORTES */
+
+      const pontosFortes =
+        document.getElementById(
+          "pontosFortes"
         );
 
 
-      const data =
-        await response.json();
+      pontosFortes.innerHTML =
+        (data.pontos_fortes || [])
+          .map(
+            x => `
+              <div class="item">
+                ✅ ${escapar(x)}
+              </div>
+       `
+          )
+          .join("");
 
 
-      if (!response.ok) {
+      /* PRÓXIMOS PASSOS */
 
-        throw new Error(
-          data.error ||
-          "Erro ao corrigir a redação."
+      const proximosPassos =
+        document.getElementById(
+          "proximosPassos"
+        );
+
+
+      proximosPassos.innerHTML =
+        (data.proximos_passos || [])
+          .map(
+            x => `
+              <div class="item">
+                🎯 ${escapar(x)}
+              </div>
+            `
+          )
+          .join("");
+
+
+      /*
+       * Vai até o resultado.
+       */
+
+      setTimeout(function() {
+
+        resultado.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }, 100);
+
+    }
+
+
+    /* =========================
+       CARREGAR HISTÓRICO
+       ========================= */
+
+    function carregarHistorico() {
+
+      try {
+
+        /*
+         * Chave principal.
+         */
+
+        const salvo =
+          localStorage.getItem(
+            "ia_nai_historico"
+          );
+
+
+        if (salvo) {
+
+          const dados =
+            JSON.parse(salvo);
+
+          if (Array.isArray(dados)) {
+            return dados;
+          }
+
+        }
+
+
+        /*
+         * Compatibilidade com a chave
+         * antiga que estava no código.
+         */
+
+        const antigo =
+          localStorage.getItem(
+            "historicoRedacoes"
+          );
+
+
+        if (antigo) {
+
+          const dadosAntigos =
+            JSON.parse(antigo);
+
+          if (Array.isArray(dadosAntigos)) {
+
+            localStorage.setItem(
+              "ia_nai_historico",
+              JSON.stringify(dadosAntigos)
+            );
+
+            return dadosAntigos;
+
+          }
+
+        }
+
+
+        return [];
+
+      } catch (error) {
+
+        console.error(
+          "Erro ao carregar histórico:",
+          error
+        );
+
+        return [];
+
+      }
+
+    }
+
+
+    /* =========================
+       SALVAR CORREÇÃO
+       ========================= */
+
+    function salvarNoHistorico(data) {
+
+      const registro = {
+
+        id:
+          Date.now().toString(),
+
+        data:
+          new Date().toISOString(),
+
+        nota_final:
+          data.nota_final ?? 0,
+
+        competencias:
+          data.competencias || [],
+
+        transcricao:
+          data.transcricao || "",
+
+        melhorias:
+          data.melhorias || [],
+
+        pontos_fortes:
+          data.pontos_fortes || [],
+
+        proximos_passos:
+          data.proximos_passos || []
+
+      };
+
+
+      historico.unshift(registro);
+
+
+      /*
+       * Mantém até 50 correções.
+       */
+
+      if (historico.length > 50) {
+
+        historico =
+          historico.slice(0, 50);
+
+      }
+
+
+      try {
+
+        localStorage.setItem(
+          "ia_nai_historico",
+          JSON.stringify(historico)
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Não foi possível salvar o histórico:",
+          error
         );
 
       }
 
 
-      mostrarResultado(data);
-
-      salvarNoHistorico(data);
-
-
-    } catch (error) {
-
-      erro.textContent =
-        error.message;
-
-      erro.style.display =
-        "block";
-
-
-    } finally {
-
-      button.disabled = false;
-
-      status.style.display =
-        "none";
+      renderizarHistorico();
 
     }
 
-  });
 
+    /* =========================
+       RENDERIZAR HISTÓRICO
+       ========================= */
 
-  /*
-   * MOSTRAR RESULTADO
-   */
+    function renderizarHistorico() {
 
-  function mostrarResultado(data) {
+      if (!historico.length) {
 
-    resultado.style.display =
-      "block";
+        listaHistorico.innerHTML = `
 
+          <div class="history-empty">
 
-    document.getElementById(
-      "notaFinal"
-    ).textContent =
-      data.nota_final ?? 0;
+            <div
+              style="
+                font-size:42px;
+                margin-bottom:10px
+              "
+            >
+              📝
+            </div>
 
+            <strong>
+              Nenhuma redação corrigida ainda.
+            </strong>
 
-    document.getElementById(
-      "transcricao"
-    ).textContent =
-      data.transcricao ||
-      "Não foi possível transcrever.";
+            <div>
+              As próximas correções aparecerão
+              aqui automaticamente.
+            </div>
 
+          </div>
 
-    const competencias =
-      document.getElementById(
-        "competencias"
-      );
-
-
-    competencias.innerHTML = "";
-
-
-    (data.competencias || [])
-      .forEach(c => {
-
-        const div =
-          document.createElement(
-            "div"
-          );
-
-        div.className =
-          "competencia";
-
-
-        div.innerHTML = `
-          <b>${escapar(c.codigo)}</b>
-          <span>${escapar(c.nota)}/200</span>
         `;
 
+        return;
 
-        competencias.appendChild(
-          div
-        );
-
-      });
+      }
 
 
-    const melhorias =
-      document.getElementById(
-        "melhorias"
-      );
+      listaHistorico.innerHTML =
+        historico
+          .map(function(item, index) {
+
+            const texto =
+              escapar(
+                item.transcricao ||
+                "Redação corrigida"
+              );
 
 
-    melhorias.innerHTML = "";
+            const data =
+              new Date(
+                item.data
+              ).toLocaleString(
+                "pt-BR",
+                {
+                  dateStyle: "short",
+                  timeStyle: "short"
+                }
+              );
 
 
-    (data.melhorias || [])
-      .forEach(m => {
+            return `
 
-        const div =
-          document.createElement(
-            "div"
-          );
+              <article
+                class="history-item"
+                data-index="${index}"
+                tabindex="0"
+              >
 
-        div.className =
-          "item";
+                <div class="history-item-top">
 
+                  <span class="history-score">
+                    ${escapar(
+                      item.nota_final
+                    )}/1000
+                  </span>
 
-        div.innerHTML = `
-          <b>${escapar(m.categoria || "Melhoria")}</b>
+                  <span class="history-date">
+                    ${escapar(data)}
+                  </span>
 
-          <p>
-            <strong>Original:</strong>
-            ${escapar(m.trecho_original || "")}
-          </p>
-
-          <p>
-            <strong>Recomendação:</strong>
-            ${escapar(m.recomendacao || "")}
-          </p>
-
-          <p>
-            <strong>Explicação:</strong>
-            ${escapar(m.explicacao || "")}
-          </p>
-
-          ${
-            m.alternativas?.length
-              ? `
-                <p>
-                  <strong>Alternativas:</strong>
-                  ${m.alternativas
-                    .map(escapar)
-                    .join(" • ")}
-                </p>
-              `
-              : ""
-          }
-        `;
+                </div>
 
 
-        melhorias.appendChild(
-          div
-        );
-
-      });
+                <span class="history-badge">
+                  Clique para abrir a correção
+                </span>
 
 
-    const pontosFortes =
-      document.getElementById(
-        "pontosFortes"
-      );
+                <div class="history-preview">
+                  ${texto}
+                </div>
 
+              </article>
 
-    pontosFortes.innerHTML =
-      (data.pontos_fortes || [])
-        .map(
-          x =>
-            `<div class="item">
-              ✅ ${escapar(x)}
-            </div>`
-        )
-        .join("");
+            `;
 
+          })
+          .join("");
 
-    const proximosPassos =
-      document.getElementById(
-        "proximosPassos"
-      );
-
-
-    proximosPassos.innerHTML =
-      (data.proximos_passos || [])
-        .map(
-          x =>
-            `<div class="item">
-              🎯 ${escapar(x)}
-            </div>`
-        )
-        .join("");
-
-
-    resultado.scrollIntoView({
-      behavior: "smooth"
-    });
-
-  }
-
-
-  /*
-   * CARREGAR HISTÓRICO
-   */
-
-  function carregarHistorico() {
-
-    try {
-
-      const dados =
-        JSON.parse(
-          localStorage.getItem(
-            "ia_nai_historico"
-          ) || "[]"
-        );
-
-
-      return Array.isArray(dados)
-        ? dados
-        : [];
-
-
-    } catch {
-
-      return [];
-
-    }
-
-  }
-
-
-  /*
-   * SALVAR CORREÇÃO
-   */
-
-  function salvarNoHistorico(data) {
-
-    const registro = {
-
-      id:
-        Date.now().toString(),
-
-      data:
-        new Date().toISOString(),
-
-      nota_final:
-        data.nota_final ?? 0,
-
-      competencias:
-        data.competencias || [],
-
-      transcricao:
-        data.transcricao || "",
-
-      melhorias:
-        data.melhorias || [],
-
-      pontos_fortes:
-        data.pontos_fortes || [],
-
-      proximos_passos:
-        data.proximos_passos || []
-
-    };
-
-
-    historico.unshift(
-      registro
-    );
-
-
-    try {
-
-      localStorage.setItem(
-        "ia_nai_historico",
-        JSON.stringify(
-          historico
-        )
-      );
-
-    } catch {
 
       /*
-       * Se o navegador atingir
-       * o limite de armazenamento,
-       * a correção continua
-       * aparecendo na tela.
+       * Adiciona os eventos
+       * aos cartões do histórico.
        */
 
-    }
+      listaHistorico
+        .querySelectorAll(".history-item")
+        .forEach(function(card) {
 
 
-    renderizarHistorico();
+          function abrir() {
 
-  }
-
-
-  /*
-   * MOSTRAR HISTÓRICO
-   */
-
-  function renderizarHistorico() {
-
-    if (!historico.length) {
-
-      listaHistorico.innerHTML = `
-
-        <div class="history-empty">
-
-          <div
-            style="
-              font-size:42px;
-              margin-bottom:10px
-            "
-          >
-            📝
-          </div>
-
-          <strong>
-            Nenhuma redação corrigida ainda.
-          </strong>
-
-          <div>
-            As próximas correções aparecerão
-            aqui automaticamente.
-          </div>
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-
-    listaHistorico.innerHTML =
-      historico
-        .map((item, index) => {
-
-          const texto =
-            escapar(
-              item.transcricao ||
-              "Redação corrigida"
-            );
-
-
-          const data =
-            new Date(
-              item.data
-            ).toLocaleString(
-              "pt-BR",
-              {
-                dateStyle: "short",
-                timeStyle: "short"
-              }
-            );
-
-
-          return `
-
-            <article
-              class="history-item"
-              data-index="${index}"
-              tabindex="0"
-            >
-
-              <div
-                class="history-item-top"
-              >
-
-                <span
-                  class="history-score"
-                >
-                  ${escapar(
-                    item.nota_final
-                  )}/1000
-                </span>
-
-                <span
-                  class="history-date"
-                >
-                  ${escapar(data)}
-                </span>
-
-              </div>
-
-
-              <span
-                class="history-badge"
-              >
-                Clique para abrir a correção
-              </span>
-
-
-              <div
-                class="history-preview"
-              >
-                ${texto}
-              </div>
-
-            </article>
-
-          `;
-
-        })
-        .join("");
-
-
-    listaHistorico
-      .querySelectorAll(
-        ".history-item"
-      )
-      .forEach(card => {
-
-
-        const abrir = () => {
-
-          const item =
-            historico[
+            const index =
               Number(
                 card.dataset.index
-              )
-            ];
+              );
 
 
-          if (item) {
+            const item =
+              historico[index];
 
-            mostrarResultado(
-              item
-            );
+
+            if (!item) {
+              return;
+            }
+
+
+            mostrarResultado(item);
 
             fecharPainelHistorico();
 
 
-            setTimeout(
-  () => {
-    resultado.scrollIntoView({
-      behavior: "smooth"
+            setTimeout(function() {
+
+              resultado.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
               });
-    }, 100);
-};
 
-card.addEventListener("click", abrir);
+            }, 150);
 
-card.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        abrir();
-    }
-});
-});
+          }
 
-fecharHistorico.addEventListener("click", fecharPainelHistorico);
 
-painelHistorico.addEventListener("click", (event) => {
-    if (event.target === painelHistorico) {
-        fecharPainelHistorico();
-    }
-});
+          card.addEventListener(
+            "click",
+            abrir
+          );
 
-document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-        fecharPainelHistorico();
-    }
-});
 
-const historicoSalvo = localStorage.getItem("historicoRedacoes");
+          card.addEventListener(
+            "keydown",
+            function(event) {
 
-if (historicoSalvo) {
-    try {
-        historico = JSON.parse(historicoSalvo);
-        atualizarHistorico();
-    } catch (erro) {
-        console.error("Erro ao carregar histórico:", erro);
-        historico = [];
-    }
-}
-// PREVIEW DA IMAGEM DA REDAÇÃO
-document.addEventListener("DOMContentLoaded", function () {
-    const inputImagem = document.querySelector('input[type="file"]');
+              if (
+                event.key === "Enter" ||
+                event.key === " "
+              ) {
 
-    if (!inputImagem) {
-        console.error("Input de imagem não encontrado.");
-        return;
-    }
+                event.preventDefault();
 
-    inputImagem.addEventListener("change", function (event) {
-        const arquivo = event.target.files && event.target.files[0];
+                abrir();
 
-        if (!arquivo) return;
+              }
 
-        if (!arquivo.type.startsWith("image/")) {
-            alert("Selecione uma imagem JPG, JPEG ou PNG.");
-            inputImagem.value = "";
-            return;
-        }
-
-        const urlImagem = URL.createObjectURL(arquivo);
-
-        // Procura o preview existente
-        let preview = document.getElementById("preview");
-
-        // Se não existir, cria um
-        if (!preview) {
-            preview = document.createElement("div");
-            preview.id = "preview";
-
-            inputImagem.parentElement.insertAdjacentElement(
-                "afterend",
-                preview
-            );
-        }
-
-        // Garante que o preview fique visível
-        preview.style.display = "block";
-        preview.style.width = "100%";
-        preview.style.margin = "20px 0";
-        preview.style.textAlign = "center";
-        preview.style.visibility = "visible";
-        preview.style.opacity = "1";
-        preview.style.height = "auto";
-        preview.style.maxHeight = "none";
-        preview.style.overflow = "visible";
-
-        // Limpa imagem anterior
-        preview.innerHTML = "";
-
-        const imagem = document.createElement("img");
-
-        imagem.src = urlImagem;
-        imagem.alt = "Imagem da redação selecionada";
-
-        imagem.style.display = "block";
-        imagem.style.width = "100%";
-        imagem.style.maxWidth = "600px";
-        imagem.style.height = "auto";
-        imagem.style.maxHeight = "700px";
-        imagem.style.objectFit = "contain";
-        imagem.style.margin = "20px auto";
-        imagem.style.borderRadius = "12px";
-
-        preview.appendChild(imagem);
-
-        // Ativa o botão Corrigir redação
-        const botoes = document.querySelectorAll("button");
-
-        botoes.forEach(function (botao) {
-            const textoBotao = botao.textContent.trim().toLowerCase();
-
-            if (textoBotao.includes("corrigir redação")) {
-                botao.disabled = false;
-                botao.style.display = "";
-                botao.style.pointerEvents = "auto";
-                botao.style.opacity = "1";
             }
+          );
+
         });
 
-        console.log("Imagem carregada com sucesso.");
-    });
-});
+    }
+
+
+    /* =========================
+       ABRIR HISTÓRICO
+       ========================= */
+
+    function abrirPainelHistorico() {
+
+      renderizarHistorico();
+
+      historyOverlay.classList.add("open");
+
+      historyOverlay.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+    }
+
+
+    /* =========================
+       FECHAR HISTÓRICO
+       ========================= */
+
+    function fecharPainelHistorico() {
+
+      historyOverlay.classList.remove("open");
+
+      historyOverlay.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+    }
+
+
+    /* =========================
+       EVENTO DO BOTÃO HISTÓRICO
+       ========================= */
+
+    abrirHistorico.addEventListener(
+      "click",
+      abrirPainelHistorico
+    );
+
+
+    /* =========================
+       BOTÃO FECHAR
+       ========================= */
+
+    fecharHistorico.addEventListener(
+      "click",
+      fecharPainelHistorico
+    );
+
+
+    /* =========================
+       CLICAR FORA DO PAINEL
+       ========================= */
+
+    historyOverlay.addEventListener(
+      "click",
+      function(event) {
+
+        if (
+          event.target ===
+          historyOverlay
+        ) {
+
+          fecharPainelHistorico();
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       ESC FECHA HISTÓRICO
+       ========================= */
+
+    document.addEventListener(
+      "keydown",
+      function(event) {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          fecharPainelHistorico();
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       APAGAR HISTÓRICO
+       ========================= */
+
+    limparHistorico.addEventListener(
+      "click",
+      function() {
+
+        if (!historico.length) {
+          return;
+        }
+
+
+        const confirmar =
+          window.confirm(
+            "Tem certeza que deseja apagar todo o histórico?"
+          );
+
+
+        if (!confirmar) {
+          return;
+        }
+
+
+        historico = [];
+
+
+        localStorage.removeItem(
+          "ia_nai_historico"
+        );
+
+
+        localStorage.removeItem(
+          "historicoRedacoes"
+        );
+
+
+        renderizarHistorico();
+
+      }
+    );
+
+
+    /* =========================
+       INICIALIZAÇÃO
+       ========================= */
+
+    renderizarHistorico();
+
   </script>
+
 </body>
 </html>
