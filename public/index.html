@@ -1238,8 +1238,8 @@ if (historicoSalvo) {
         historico = [];
     }
 }
-// CORREÇÃO DO PREVIEW DA IMAGEM DA REDAÇÃO
-document.addEventListener("DOMContentLoaded", () => {
+// PREVIEW DA IMAGEM DA REDAÇÃO
+document.addEventListener("DOMContentLoaded", function () {
     const inputImagem = document.querySelector('input[type="file"]');
 
     if (!inputImagem) {
@@ -1247,7 +1247,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    inputImagem.addEventListener("change", (event) => {
+    inputImagem.addEventListener("change", function (event) {
         const arquivo = event.target.files && event.target.files[0];
 
         if (!arquivo) return;
@@ -1258,26 +1258,39 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Remove preview anterior
-        const previewAnterior = document.getElementById("previewImagemRedacao");
+        const urlImagem = URL.createObjectURL(arquivo);
 
-        if (previewAnterior) {
-            previewAnterior.remove();
+        // Procura o preview existente
+        let preview = document.getElementById("preview");
+
+        // Se não existir, cria um
+        if (!preview) {
+            preview = document.createElement("div");
+            preview.id = "preview";
+
+            inputImagem.parentElement.insertAdjacentElement(
+                "afterend",
+                preview
+            );
         }
 
-        // Cria o container do preview
-        const preview = document.createElement("div");
-        preview.id = "previewImagemRedacao";
-
+        // Garante que o preview fique visível
         preview.style.display = "block";
         preview.style.width = "100%";
         preview.style.margin = "20px 0";
         preview.style.textAlign = "center";
+        preview.style.visibility = "visible";
+        preview.style.opacity = "1";
+        preview.style.height = "auto";
+        preview.style.maxHeight = "none";
+        preview.style.overflow = "visible";
 
-        // Cria a imagem
+        // Limpa imagem anterior
+        preview.innerHTML = "";
+
         const imagem = document.createElement("img");
 
-        imagem.id = "imagemRedacaoSelecionada";
+        imagem.src = urlImagem;
         imagem.alt = "Imagem da redação selecionada";
 
         imagem.style.display = "block";
@@ -1286,32 +1299,15 @@ document.addEventListener("DOMContentLoaded", () => {
         imagem.style.height = "auto";
         imagem.style.maxHeight = "700px";
         imagem.style.objectFit = "contain";
-        imagem.style.margin = "0 auto";
+        imagem.style.margin = "20px auto";
         imagem.style.borderRadius = "12px";
-
-        // Usa FileReader para garantir o carregamento da imagem
-        const leitor = new FileReader();
-
-        leitor.onload = (e) => {
-            imagem.src = e.target.result;
-        };
-
-        leitor.onerror = () => {
-            console.error("Não foi possível carregar a imagem.");
-            alert("Não foi possível carregar a imagem.");
-        };
-
-        leitor.readAsDataURL(arquivo);
 
         preview.appendChild(imagem);
 
-        // Coloca o preview logo depois do campo de seleção
-        inputImagem.insertAdjacentElement("afterend", preview);
-
-        // Libera o botão Corrigir redação
+        // Ativa o botão Corrigir redação
         const botoes = document.querySelectorAll("button");
 
-        botoes.forEach((botao) => {
+        botoes.forEach(function (botao) {
             const textoBotao = botao.textContent.trim().toLowerCase();
 
             if (textoBotao.includes("corrigir redação")) {
@@ -1325,7 +1321,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Imagem carregada com sucesso.");
     });
 });
-</script>
-
+  </script>
 </body>
 </html>
