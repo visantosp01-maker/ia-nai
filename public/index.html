@@ -1248,59 +1248,67 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     inputImagem.addEventListener("change", (event) => {
-        const arquivo = event.target.files[0];
+        const arquivo = event.target.files && event.target.files[0];
 
-        if (!arquivo) {
-            return;
-        }
+        if (!arquivo) return;
 
-        // Verifica se é uma imagem
         if (!arquivo.type.startsWith("image/")) {
             alert("Selecione uma imagem JPG, JPEG ou PNG.");
             inputImagem.value = "";
             return;
         }
 
-        // Procura um preview existente
-        let preview = document.getElementById("preview");
+        // Remove preview anterior
+        const previewAnterior = document.getElementById("previewImagemRedacao");
 
-        // Se não existir, cria um
-        if (!preview) {
-            preview = document.createElement("div");
-            preview.id = "preview";
-
-            inputImagem.parentElement.insertBefore(
-                preview,
-                inputImagem.nextSibling
-            );
+        if (previewAnterior) {
+            previewAnterior.remove();
         }
 
-        // Limpa o preview anterior
-        preview.innerHTML = "";
+        // Cria o container do preview
+        const preview = document.createElement("div");
+        preview.id = "previewImagemRedacao";
+
+        preview.style.display = "block";
+        preview.style.width = "100%";
+        preview.style.margin = "20px 0";
+        preview.style.textAlign = "center";
 
         // Cria a imagem
         const imagem = document.createElement("img");
 
-        imagem.src = URL.createObjectURL(arquivo);
+        imagem.id = "imagemRedacaoSelecionada";
         imagem.alt = "Imagem da redação selecionada";
 
         imagem.style.display = "block";
         imagem.style.width = "100%";
         imagem.style.maxWidth = "600px";
-        imagem.style.maxHeight = "700px";
         imagem.style.height = "auto";
+        imagem.style.maxHeight = "700px";
         imagem.style.objectFit = "contain";
-        imagem.style.margin = "20px auto";
+        imagem.style.margin = "0 auto";
         imagem.style.borderRadius = "12px";
 
-        // Quando a imagem carregar, libera a URL
-        imagem.onload = () => {
-            URL.revokeObjectURL(imagem.src);
+        // Usa FileReader para garantir o carregamento da imagem
+        const leitor = new FileReader();
+
+        leitor.onload = (e) => {
+            imagem.src = e.target.result;
         };
+
+        leitor.onerror = () => {
+            console.error("Não foi possível carregar a imagem.");
+            alert("Não foi possível carregar a imagem.");
+        };
+
+        leitor.readAsDataURL(arquivo);
 
         preview.appendChild(imagem);
 
-        // Ativa o botão "Corrigir redação"
+        // Coloca o preview logo depois do campo de seleção
+        inputImagem.insertAdjacentElement("afterend", preview);
+
+        // Libera o botão Corrigir redação
         const botoes = document.querySelectorAll("button");
 
         botoes.forEach((botao) => {
