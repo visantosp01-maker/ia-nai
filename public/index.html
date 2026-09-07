@@ -1260,12 +1260,13 @@
        ========================= */
 
     function salvarNoHistorico(data) {
-
+const imagemHistorico = data.imagem || imagemSelecionada || "";
       const registro = {
 
         id:
           Date.now().toString(),
-
+        imagem:
+             imagemHistorico,
         data:
           new Date().toISOString(),
 
