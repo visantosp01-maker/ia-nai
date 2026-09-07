@@ -1238,7 +1238,85 @@ if (historicoSalvo) {
         historico = [];
     }
 }
+// CORREÇÃO DO PREVIEW DA IMAGEM DA REDAÇÃO
+document.addEventListener("DOMContentLoaded", () => {
+    const inputImagem = document.querySelector('input[type="file"]');
 
+    if (!inputImagem) {
+        console.error("Input de imagem não encontrado.");
+        return;
+    }
+
+    inputImagem.addEventListener("change", (event) => {
+        const arquivo = event.target.files[0];
+
+        if (!arquivo) {
+            return;
+        }
+
+        // Verifica se é uma imagem
+        if (!arquivo.type.startsWith("image/")) {
+            alert("Selecione uma imagem JPG, JPEG ou PNG.");
+            inputImagem.value = "";
+            return;
+        }
+
+        // Procura um preview existente
+        let preview = document.getElementById("preview");
+
+        // Se não existir, cria um
+        if (!preview) {
+            preview = document.createElement("div");
+            preview.id = "preview";
+
+            inputImagem.parentElement.insertBefore(
+                preview,
+                inputImagem.nextSibling
+            );
+        }
+
+        // Limpa o preview anterior
+        preview.innerHTML = "";
+
+        // Cria a imagem
+        const imagem = document.createElement("img");
+
+        imagem.src = URL.createObjectURL(arquivo);
+        imagem.alt = "Imagem da redação selecionada";
+
+        imagem.style.display = "block";
+        imagem.style.width = "100%";
+        imagem.style.maxWidth = "600px";
+        imagem.style.maxHeight = "700px";
+        imagem.style.height = "auto";
+        imagem.style.objectFit = "contain";
+        imagem.style.margin = "20px auto";
+        imagem.style.borderRadius = "12px";
+
+        // Quando a imagem carregar, libera a URL
+        imagem.onload = () => {
+            URL.revokeObjectURL(imagem.src);
+        };
+
+        preview.appendChild(imagem);
+
+        // Ativa o botão "Corrigir redação"
+        const botoes = document.querySelectorAll("button");
+
+        botoes.forEach((botao) => {
+            const textoBotao = botao.textContent.trim().toLowerCase();
+
+            if (textoBotao.includes("corrigir redação")) {
+                botao.disabled = false;
+                botao.style.display = "";
+                botao.style.pointerEvents = "auto";
+                botao.style.opacity = "1";
+            }
+        });
+
+        console.log("Imagem carregada com sucesso.");
+    });
+});
 </script>
 
 </body>
