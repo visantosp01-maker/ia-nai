@@ -1454,11 +1454,33 @@
             if (!item) {
               return;
             }
+// Restaura a imagem original da redação selecionada no histórico
+if (item.imagem) {
+    imagemSelecionada = item.imagem;
 
+    if (preview) {
+        preview.innerHTML = "";
 
-            mostrarResultado(item);
+        const img = document.createElement("img");
+        img.src = item.imagem;
+        img.alt = "Imagem da redação selecionada no histórico";
 
-            fecharPainelHistorico();
+        img.style.display = "block";
+        img.style.width = "100%";
+        img.style.maxWidth = "600px";
+        img.style.maxHeight = "700px";
+        img.style.height = "auto";
+        img.style.objectFit = "contain";
+        img.style.margin = "20px auto";
+        img.style.borderRadius = "12px";
+
+        preview.appendChild(img);
+    }
+}
+
+mostrarResultado(item);
+
+fecharPainelHistorico():
 
 
             setTimeout(function() {
